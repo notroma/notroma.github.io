@@ -1,0 +1,14 @@
+[
+  { "name": "How I Think About" },
+  { "name": "Concepts" },
+  { 
+    "name": "Learning", 
+    "subfolder": [
+     { "name": "Math" },
+     { "name": "Machine Learning" },
+     { "name": "Computers" }
+    ] 
+  },
+  { "name": "Archive" },
+  { "name": "Recently Deleted" }
+]

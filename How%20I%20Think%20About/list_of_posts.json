@@ -1,0 +1,17 @@
+[
+  {
+    "filename": "hello-world.html",
+    "title": "Hello World",
+    "preview": "This is a preview of Hello World"
+  },
+  {
+    "filename": "hello-world2.html",
+    "title": "Hello World2",
+    "preview": "This is a preview of Hello World2"
+  },
+  {
+    "filename": "hello-world3.html",
+    "title": "Hello World3",
+    "preview": "This is a preview of Hello World3"
+  }
+]
