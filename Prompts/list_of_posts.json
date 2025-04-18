@@ -1,0 +1,27 @@
+[
+  {
+    "filename": "guess-my-iq.html",
+    "title": "Guess My IQ",
+    "preview": "Prompt: Based on our talks"
+  },
+  {
+    "filename": "comic-of-us.html",
+    "title": "Generate a Comic of Us",
+    "preview": "Prompt: Can you generate an image"
+  },
+  {
+    "filename": "psychoanalyze-me.html",
+    "title": "Pyschoanalyze Me",
+    "preview": "Prompt: Can you psychoanalyze me?"
+  },
+  {
+    "filename": "describe-me.html",
+    "title": "Describe Me",
+    "preview": "Prompt: Describe me based on all"
+  },
+  {
+    "filename": "3d-game-character.html",
+    "title": "Late-90s 3D Game Character Prompt",
+    "preview": "Prompt: a very low-poly 3D chara..."
+  }
+]
