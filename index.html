@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roma's Notes</title>
+  <style>
+    /* ------------------------------------------------
+       GLOBAL / RESET / BASE LAYOUT
+    ------------------------------------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #EAEAEA; /* Overall page background */
+      height: 100vh;
+      display: flex;  /* Three-column layout */
+      overflow: hidden;
+      color: #DDD;
+    }
+
+    /* Each column container */
+    .column {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #000;
+      height: 100%;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .column-header {
+      font-size: 1.2rem;
+    }
+
+    /* Back buttons for mobile navigation */
+    .back-button {
+      display: none; /* Hidden by default, shown on mobile */
+      background: none;
+      border: none;
+      color: #FFB800;
+      padding: 0.5rem 0;
+      cursor: pointer;
+      font-size: 1.0rem;
+      align-items: center;
+    }
+    .back-button svg {
+      margin-right: 0.5rem;
+    }
+    .back-button:hover {
+      color: #007AFF;
+    }
+
+    /* Hamburger menu for tablet */
+    .menu-button {
+      display: none; /* Hidden by default, shown on tablet */
+      background: none;
+      border: none;
+      color: #FFB800;
+      padding: 0.5rem;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    .menu-button:hover {
+      color: #007AFF;
+    }
+
+    /* ------------------------------------------------
+       FOLDERS COLUMN
+    ------------------------------------------------- */
+    .folders {
+      width: 22%;
+      min-width: 180px;
+      max-width: 260px;
+      background-color: #292827;
+      z-index: 10;
+    }
+    .folders-header {
+      padding: 1.025rem 1rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    /* Folder items */
+    .folder-container {
+      max-width: 400px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }    
+    .folder-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 15px;
+      cursor: pointer;
+      position: relative;
+      transition: background-color 0.2s;
+    }    
+    .folder-item:hover {
+      background-color: #393836;
+    }    
+    .folder-item.selected {
+      background-color: #434140;
+    }    
+    .folder-icon {
+      margin-right: 8px;
+      flex-shrink: 0;
+    }    
+    .folder-name {
+      flex-grow: 1;
+    }    
+    .folder-count {
+      color: #888;
+      margin-right: 5px;
+    }    
+    .chevron {
+      color: #888;
+      transition: transform 0.3s;
+      width: 20px;
+      text-align: center;
+      visibility: hidden;
+    }    
+    .has-children .chevron {
+      visibility: hidden;
+    }
+    /* Show chevron when folder is hovered, selected, or expanded */
+    .folder-item:hover .chevron,
+    .folder-item.selected .chevron,
+    .folder-item.expanded .chevron {
+      visibility: visible;
+    }    
+    .folder-item.expanded .chevron {
+      transform: rotate(90deg);
+    }    
+    .folder-children {
+      height: 0;
+      overflow: hidden;
+      transition: height 0.3s ease;
+    }    
+    .folder-children .folder-item {
+      padding-left: 40px;
+    }    
+    .expanded + .folder-children {
+      height: auto;
+    }
+
+    /* ------------------------------------------------
+       NOTES LIST COLUMN
+    ------------------------------------------------- */
+    .notes-list {
+      width: 26%;
+      min-width: 220px;
+      max-width: 350px;
+      background-color: #232220;
+    }
+    .notes-list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      font-weight: 600;
+    }
+    /* "New Note" button on top right */
+    .new-note-button {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      outline: none;
+      color: #FFB800;
+    }
+    .new-note-button:hover {
+      color: #007AFF;
+    }
+
+    /* Note list items */
+    .note-item {
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid #393836;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .note-item:hover {
+      background-color: #393836;
+      border-radius: 0.45rem;
+    }
+    .note-item.active {
+      background-color: #9F8229;
+      font-weight: 500;
+      border-radius: 0.45rem;
+    }
+    .note-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .note-preview {
+      font-size: 0.9rem;
+      color: #9C9B9A;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .note-item.active>.note-preview {
+      color: #D3C7A2;
+    }
+
+    .mobile-notes-title {
+      display: none;
+    }
+
+    /* ------------------------------------------------
+       NOTE EDITOR COLUMN
+    ------------------------------------------------- */
+    .note-editor {
+      flex: 1;
+      background-color: #1E1E1E;
+      border-right: none;
+      overflow-y: auto; 
+    }
+    .note-editor-header {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      font-weight: 600;
+      background-color: #1E1E1E;
+    }
+    .note-editor-content {
+      background-color: #1E1E1E;
+      padding: 1.5rem;
+      min-height: calc(100% - 3rem); /* Adjust for header */
+      outline: none;
+    }
+    .note-editor-content h1 {
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+    }
+    .note-editor-content p {
+      line-height: 1.6;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+    .note-editor-content[contenteditable="true"] {
+      outline: none;
+    }
+
+    /* ------------------------------------------------
+       RESPONSIVE STYLES
+    ------------------------------------------------- */
+    /* For tablet devices */
+    @media (max-width: 1024px) {
+      body {
+        flex-direction: row;
+      }
+      
+      /* Hide folders by default */
+      .folders {
+        position: absolute;
+        top: 0;
+        left: -280px; /* Move off-screen */
+        height: 100%;
+        width: 26%;
+        max-width: 300px;
+        transition: left 0.3s ease;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+      }
+      
+      .folders.visible {
+        left: 0; /* Show when active */
+      }
+      
+      /* Show menu button */
+      .menu-button {
+        display: block;
+      }
+      
+      /* Adjust notes list width */
+      .notes-list {
+        width: 40%;
+        max-width: none;
+      }
+      
+      /* Close button for folders panel */
+      .folders-close {
+        display: block;
+      }
+    }
+
+    /* For mobile devices */
+    @media (max-width: 767px) {
+      body {
+        flex-direction: column;
+        overflow: hidden;
+      }
+      
+      .column {
+        width: 100%;
+        max-width: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        transition: transform 0.3s ease;
+      }
+      
+      /* Position columns for slide navigation */
+      .folders {
+        transform: translateX(-100%);
+        z-index: 30;
+      }
+      
+      .notes-list {
+        transform: translateX(0);
+        z-index: 20;
+      }
+      
+      .note-editor {
+        transform: translateX(100%);
+        z-index: 10;
+      }
+      
+      /* Active states for mobile navigation */
+      .folders.active {
+        transform: translateX(0);
+      }
+      
+      .notes-list.active {
+        transform: translateX(0);
+      }
+
+      .notes-list-header {
+        position: relative;
+        padding-bottom: 1rem; /* Create space for the title below */
+      }
+
+      .mobile-notes-title {
+        display: block;
+        font-weight: 600;
+        padding: 0.75rem 1rem;
+      }
+
+      /* Hide the desktop title on mobile */
+      .notes-list-header .desktop-notes-title {
+        display: none;
+      }
+      
+      .note-editor.active {
+        transform: translateX(0);
+      }
+      
+      /* Show back buttons on mobile */
+      .back-button {
+        display: flex;
+      }
+      
+      /* Hide overflow on active columns */
+      .column.active {
+        overflow-y: auto;
+      }
+
+      .menu-button {
+        display: none;
+      }
+      
+      /* Columns not shown start offscreen */
+      body.show-folders .folders {
+        transform: translateX(0);
+      }
+      
+      body.show-notes .notes-list {
+        transform: translateX(0);
+      }
+      
+      body.show-editor .note-editor {
+        transform: translateX(0);
+      }
+      
+      body.show-notes .folders {
+        transform: translateX(-100%);
+      }
+      
+      body.show-editor .folders,
+      body.show-editor .notes-list {
+        transform: translateX(-100%);
+      }
+    }
+
+    /* Dark overlay for mobile when folders are showing */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 5;
+    }
+    
+    @media (max-width: 1024px) {
+      .overlay.visible {
+        display: block;
+      }
+    }
+
+  </style>
+</head>
+<body class="show-folders">
+
+  <!-- Dark overlay for tablet/mobile -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- FOLDERS COLUMN -->
+  <div class="column folders" id="foldersColumn">
+    <div class="folders-header">
+      <span class="column-header">Folders</span>
+      <button class="folders-close" id="foldersCloseBtn" style="display: none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFB800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div id="foldersContainer">
+      <p style="padding:1rem; color:#666;">Loading Categories...</p>
+    </div>
+  </div>
+
+  <!-- NOTES LIST COLUMN -->
+  <div class="column notes-list" id="notesListColumn">
+    <div class="notes-list-header">
+      <div style="display: flex; align-items: center;">
+        <button class="back-button" id="notesBackBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          Folders
+        </button>
+        <button class="menu-button" id="menuBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <span class="desktop-notes-title column-header">Notes</span>
+      </div>
+      <!-- "New Note" button -->
+      <button class="new-note-button" id="newNoteBtn">+</button>
+    </div>
+      
+    <!-- Mobile-only title that appears below -->
+    <span class="mobile-notes-title column-header">Notes</span>
+
+    <div id="postsContainer">
+      <p style="padding:1rem; color:#666;">Select a category</p>
+    </div>
+  </div>
+
+  <!-- NOTE EDITOR COLUMN -->
+  <div class="column note-editor" id="noteEditorColumn">
+    <div class="note-editor-header">
+      <button class="back-button" id="editorBackBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        Notes
+      </button>
+    </div>
+    <div 
+      class="note-editor-content" 
+      id="editor" 
+      contenteditable="true"
+    >
+      <!-- Content will be loaded here -->
+    </div>
+  </div>
+
+  <script>
+    /* -------------------------------
+       SCRIPT FOR INTERACTIVITY
+    --------------------------------*/
+
+    const foldersContainer = document.getElementById('foldersContainer');
+    const postsContainer = document.getElementById('postsContainer');
+    const editor = document.getElementById('editor');
+    const foldersColumn = document.getElementById('foldersColumn');
+    const notesListColumn = document.getElementById('notesListColumn');
+    const noteEditorColumn = document.getElementById('noteEditorColumn');
+    const menuBtn = document.getElementById('menuBtn');
+    const notesBackBtn = document.getElementById('notesBackBtn');
+    const editorBackBtn = document.getElementById('editorBackBtn');
+    const foldersCloseBtn = document.getElementById('foldersCloseBtn');
+    const overlay = document.getElementById('overlay');
+    
+    let currentCategory = '';
+    let isMobile = window.innerWidth <= 767;
+    let isTablet = window.innerWidth > 767 && window.innerWidth <= 1024;
+
+    const url = 'https://notroma.github.io/';
+    const folders = 'folders.json';
+    const listOfPosts = 'list_of_posts.json';
+
+    const cache = new Map();
+    const CACHE_TTL = 5 * 60 * 1000; // Cache entries live for 5 minutes (in milliseconds)
+    const MAX_CACHE_SIZE = 50;       // Maximum number of entries in cache
+
+    /* -------------------------------
+     * RESPONSIVE NAVIGATION
+     --------------------------------*/
+    
+    function checkDeviceSize() {
+      isMobile = window.innerWidth <= 767;
+      isTablet = window.innerWidth > 767 && window.innerWidth <= 1024;
+      
+      // Reset any transforms or positions when switching between device sizes
+      if (!isMobile) {
+        document.body.className = '';
+        foldersColumn.classList.remove('active');
+        notesListColumn.classList.remove('active');
+        noteEditorColumn.classList.remove('active');
+      } else {
+        showFolders(); // Default to showing folders on mobile
+      }
+      
+      // Handle tablet view default state
+      if (isTablet) {
+        foldersColumn.classList.remove('visible');
+        overlay.classList.remove('visible');
+      }
+    }
+
+    function showFolders() {
+      if (isMobile) {
+        document.body.className = 'show-folders';
+        foldersColumn.classList.add('active');
+        notesListColumn.classList.remove('active');
+        noteEditorColumn.classList.remove('active');
+      }
+    }
+
+    function showNotesList() {
+      if (isMobile) {
+        document.body.className = 'show-notes';
+        foldersColumn.classList.remove('active');
+        notesListColumn.classList.add('active');
+        noteEditorColumn.classList.remove('active');
+      }
+    }
+
+    function showNoteEditor() {
+      if (isMobile) {
+        document.body.className = 'show-editor';
+        foldersColumn.classList.remove('active');
+        notesListColumn.classList.remove('active');
+        noteEditorColumn.classList.add('active');
+      }
+    }
+
+    function toggleFoldersMenu() {
+      foldersColumn.classList.toggle('visible');
+      overlay.classList.toggle('visible');
+    }
+
+    // Initialize responsive navigation
+    window.addEventListener('resize', checkDeviceSize);
+    menuBtn.addEventListener('click', toggleFoldersMenu);
+    notesBackBtn.addEventListener('click', showFolders);
+    editorBackBtn.addEventListener('click', showNotesList);
+    foldersCloseBtn.addEventListener('click', toggleFoldersMenu);
+    overlay.addEventListener('click', toggleFoldersMenu);
+
+    /* -------------------------------
+    * FETCH URL AND SAVE RESULTS TO CACHE
+    --------------------------------*/
+    function fetchWithCache(url, type = 'json') {
+      const now = Date.now();
+
+      // Check if we have this URL cached and it hasn't expired.
+      if (cache.has(url)) {
+        const entry = cache.get(url);
+        if (now - entry.timestamp < CACHE_TTL) {
+          // Mark as recently used by deleting and re-inserting.
+          cache.delete(url);
+          cache.set(url, entry);
+          return Promise.resolve(entry.data);
+        }
+        // Entry has expired—delete it.
+        cache.delete(url);
+      }
+
+      // Not in cache or expired; perform fetch.
+      return fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return type === 'json' ? response.json() : response.text();
+        })
+        .then(data => {
+          // Store the data with current timestamp.
+          cache.set(url, { data, timestamp: now });
+          // Evict the least recently used item if cache exceeds maximum size.
+          if (cache.size > MAX_CACHE_SIZE) {
+            const oldestKey = cache.keys().next().value;
+            cache.delete(oldestKey);
+          }
+          return data;
+        });
+    }
+    
+
+    // ---------------------------
+    // FETCH FOLDERS FROM FOLDERS.JSON
+    // ---------------------------
+    function fetchFolders() {
+      const foldersUrl = url + folders;
+
+      fetchWithCache(foldersUrl, 'json')
+        .then(data => {
+          foldersContainer.innerHTML = '';
+          console.log(data);
+          // Build the folder structure
+          buildFolderStructure(data, foldersContainer);
+          setupEventListenersForFolders();
+        })
+        .catch(err => {
+          console.error('Error fetching folders:', err);
+          foldersContainer.innerHTML = `<p style="padding:1rem; color:#666;">Error loading categories.</p>`;
+        });
+    }
+
+    // Function to create folder structure
+    function buildFolderStructure(data, parentElement) {
+      data.forEach((folder, index) => {
+        // Create folder item
+        const folderItem = document.createElement('div');
+        folderItem.className = 'folder-item';
+        folderItem.id = `folder-${index}`;
+
+        // Store folder name as data attribute
+        folderItem.dataset.folderName = folder.name;
+
+        // Add has-children class if folder has subfolders
+        if (folder.subfolder && folder.subfolder.length > 0) {
+          folderItem.classList.add('has-children');
+        }
+
+        // Create folder icon
+        const folderIcon = document.createElement('div');
+        folderIcon.className = 'folder-icon';
+        folderIcon.innerHTML = `
+          <svg 
+            width="16" 
+            height="16" 
+            fill="none" 
+            stroke="#FFB800" 
+            stroke-width="1.5" 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            viewBox="0 0 24 24"
+          >
+            <path d="M3 6h5l2 2h11v10c0 1.1-.9 2-2 2H3c-1.105 0-2-.9-2-2V8c0-1.105.895-2 2-2Z"/>
+          </svg>
+        `;
+
+        // Create folder name
+        const folderName = document.createElement('div');
+        folderName.className = 'folder-name';
+        folderName.textContent = folder.name;
+
+        // Create chevron (dropdown indicator)
+        const chevron = document.createElement('div');
+        chevron.className = 'chevron';
+        if (folder.subfolder && folder.subfolder.length > 0) {
+          chevron.innerHTML = `
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#FFB800" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3.5 8L6.5 5L3.5 2" />
+            </svg>
+          `;
+        }
+
+        // Append elements to folder item
+        folderItem.appendChild(folderIcon);
+        folderItem.appendChild(folderName);
+        folderItem.appendChild(chevron);
+
+        // Append folder item to parent
+        parentElement.appendChild(folderItem);
+
+        // If folder has subfolders, create the children container
+        if (folder.subfolder && folder.subfolder.length > 0) {
+          const childrenContainer = document.createElement('div');
+          childrenContainer.className = 'folder-children';
+          childrenContainer.id = `children-${index}`;
+          parentElement.appendChild(childrenContainer);
+          
+          // Recursively build subfolders
+          buildFolderStructure(folder.subfolder, childrenContainer);
+        }
+      });
+    }
+
+    // Add event listeners after DOM is constructed
+    function setupEventListenersForFolders() {
+      // Get all folder items with children
+      const foldersWithChildren = document.querySelectorAll('.has-children');
+      
+      // Add click event listeners for expansion/collapse
+      foldersWithChildren.forEach(folder => {
+        folder.addEventListener('click', function(e) {
+          this.classList.toggle('expanded');
+          const children = this.nextElementSibling;
+          
+          if (this.classList.contains('expanded')) {
+            children.style.height = children.scrollHeight + 'px';
+          } else {
+            children.style.height = '0';
+          }
+          e.stopPropagation();
+        });
+      });
+      
+      // Make all folder items selectable
+      const allFolders = document.querySelectorAll('.folder-item');
+      allFolders.forEach(folder => {
+        folder.addEventListener('click', function(e) {
+          // Remove selected class from all folders
+          allFolders.forEach(f => {
+            if (f !== this) f.classList.remove('selected');
+          });
+          
+          // Add selected class to clicked folder
+          this.classList.add('selected');
+
+          const folderName = this.dataset.folderName;
+
+          if (!this.classList.contains('has-children')) {
+            currentCategory = folderName;
+            fetchPosts(currentCategory);
+            
+            // On mobile, navigate to notes list when a folder is selected
+            if (isMobile) {
+              showNotesList();
+            }
+            
+            // On tablet, hide the folders panel
+            if (isTablet) {
+              toggleFoldersMenu();
+            }
+          }
+          
+          // Stop propagation for child folders
+          e.stopPropagation();
+        });
+      });
+    }
+
+    // ---------------------------
+    // FETCH POSTS LIST FROM list_of_posts.json
+    // ---------------------------
+    function fetchPosts(folderName) {
+      console.log(encodeURIComponent(folderName));
+      postsContainer.innerHTML = `<p style="padding:1rem; color:#666;">Loading posts...</p>`;
+      const postsUrl = url + encodeURIComponent(folderName) + '/' + listOfPosts;
+
+      fetchWithCache(postsUrl, 'json')
+        .then(posts => {
+          if (!posts || posts.length === 0) {
+            postsContainer.innerHTML = `<p style="padding:1rem; color:#666;">No posts found in this category.</p>`;
+            return;
+          }
+
+          postsContainer.innerHTML = '';
+          posts.forEach(post => {
+            const fileName = post.filename; // Use the filename property from JSON
+            const postEl = document.createElement('div');
+            postEl.classList.add('note-item');
+            postEl.setAttribute('data-folder', folderName);
+            postEl.setAttribute('data-post', fileName);
+            postEl.innerHTML = `
+              <div class="note-title">${post.title}</div>
+              <div class="note-preview">${post.preview}</div>
+            `;
+            postEl.addEventListener('click', function() {
+              // Remove active class from all posts and add it to the selected post.
+              document.querySelectorAll('.note-item').forEach(item => item.classList.remove('active'));
+              postEl.classList.add('active');
+              fetchPostContent(folderName, fileName);
+              
+              // On mobile, navigate to note editor when a note is selected
+              if (isMobile) {
+                showNoteEditor();
+              }
+            });
+            postsContainer.appendChild(postEl);
+          });
+        })
+        .catch(err => {
+          console.error('Error fetching posts:', err);
+          postsContainer.innerHTML = `<p style="padding:1rem; color:#666;">Error loading posts.</p>`;
+        });
+    }
+
+    // ---------------------------
+    // FETCH FULL BLOG POST CONTENT
+    // ---------------------------
+    function fetchPostContent(folderName, fileName) {
+      const postContentUrl = url + encodeURIComponent(folderName) + '/' + fileName;
+      fetchWithCache(postContentUrl, 'txt')
+        .then(html => {
+          editor.innerHTML = html;
+        })
+        .catch(err => {
+          console.error('Error fetching post content:', err);
+          editor.innerHTML = `<p style="padding:1rem; color:#666;">Error loading post content.</p>`;
+        });
+    }
+
+    // ---------------------------
+    // Initialize the page
+    // ---------------------------
+    checkDeviceSize(); // Check device size on load
+    fetchFolders();    // Load the folders data
+  </script>
+</body>
+</html>

@@ -1,5 +1,4 @@
 [
-  { "name": "How I Think About" },
   { "name": "Concepts" },
   { 
     "name": "Learning", 
@@ -9,6 +8,7 @@
      { "name": "Computers" }
     ] 
   },
-  { "name": "Archive" },
+  { "name": "Notes" },
+  { "name": "Prompts" },
   { "name": "Recently Deleted" }
 ]
