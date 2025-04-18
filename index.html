@@ -248,6 +248,10 @@
       color: #9F8229;
       cursor: pointer;
     }
+
+    .note-editor-content blockquote {
+      margin-left: 1.25rem;
+    }
     .note-editor-content[contenteditable="true"] {
       outline: none;
     }
@@ -506,7 +510,7 @@
     let isMobile = window.innerWidth <= 767;
     let isTablet = window.innerWidth > 767 && window.innerWidth <= 1024;
 
-    const url = 'https://notroma.github.io/';
+    const url = 'https://notroma.com/';
     const folders = 'folders.json';
     const listOfPosts = 'list_of_posts.json';
 
