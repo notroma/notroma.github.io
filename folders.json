@@ -1,4 +1,5 @@
 [
+  { "name": "Hello 👋" },
   { "name": "Concepts" },
   { 
     "name": "Learning", 
@@ -8,7 +9,6 @@
      { "name": "Computers" }
     ] 
   },
-  { "name": "Notes" },
   { "name": "Prompts" },
   { "name": "Recently Deleted" }
 ]
