@@ -244,6 +244,10 @@
       margin-bottom: 1rem;
       font-size: 1rem;
     }
+    .note-editor-content a {
+      color: #9F8229;
+      cursor: pointer;
+    }
     .note-editor-content[contenteditable="true"] {
       outline: none;
     }
@@ -636,15 +640,18 @@
     }
 
     // Function to create folder structure
-    function buildFolderStructure(data, parentElement) {
+    function buildFolderStructure(data, parentElement, parentPath = '') {
       data.forEach((folder, index) => {
         // Create folder item
         const folderItem = document.createElement('div');
         folderItem.className = 'folder-item';
         folderItem.id = `folder-${index}`;
 
+        // Create the full path for this folder
+        const currentPath = parentPath ? `${parentPath}/${folder.name}` : folder.name;
+
         // Store folder name as data attribute
-        folderItem.dataset.folderName = folder.name;
+        folderItem.dataset.folderName = currentPath;
 
         // Add has-children class if folder has subfolders
         if (folder.subfolder && folder.subfolder.length > 0) {
@@ -701,7 +708,7 @@
           parentElement.appendChild(childrenContainer);
           
           // Recursively build subfolders
-          buildFolderStructure(folder.subfolder, childrenContainer);
+          buildFolderStructure(folder.subfolder, childrenContainer, currentPath);
         }
       });
     }
