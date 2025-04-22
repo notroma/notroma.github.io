@@ -17,11 +17,16 @@
   {
     "filename": "describe-me.html",
     "title": "Describe Me",
-    "preview": "Prompt: Describe me based on all"
+    "preview": "Prompt: Describe me based on all.."
   },
   {
     "filename": "3d-game-character.html",
     "title": "Late-90s 3D Game Character Prompt",
     "preview": "Prompt: a very low-poly 3D chara..."
+  },
+  {
+    "filename": "anonymous-note.html",
+    "title": "Anonymous Note",
+    "preview": "Prompt: Write an honest, anonymous..."
   }
 ]
