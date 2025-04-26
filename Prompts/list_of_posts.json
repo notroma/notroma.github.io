@@ -1,23 +1,13 @@
 [
   {
-    "filename": "guess-my-iq.html",
-    "title": "Guess My IQ",
-    "preview": "Prompt: Based on our talks"
+    "filename": "book-recommendations.html",
+    "title": "Book Recommendations",
+    "preview": "Prompt: Based on our conversations..."
   },
   {
-    "filename": "comic-of-us.html",
-    "title": "Generate a Comic of Us",
-    "preview": "Prompt: Can you generate an image"
-  },
-  {
-    "filename": "psychoanalyze-me.html",
-    "title": "Pyschoanalyze Me",
-    "preview": "Prompt: Can you psychoanalyze me?"
-  },
-  {
-    "filename": "describe-me.html",
-    "title": "Describe Me",
-    "preview": "Prompt: Describe me based on all.."
+    "filename": "anonymous-note.html",
+    "title": "Anonymous Note",
+    "preview": "Prompt: Write an honest, anonymous..."
   },
   {
     "filename": "3d-game-character.html",
@@ -25,8 +15,23 @@
     "preview": "Prompt: a very low-poly 3D chara..."
   },
   {
-    "filename": "anonymous-note.html",
-    "title": "Anonymous Note",
-    "preview": "Prompt: Write an honest, anonymous..."
+    "filename": "describe-me.html",
+    "title": "Describe Me",
+    "preview": "Prompt: Describe me based on all.."
+  },
+  {
+    "filename": "psychoanalyze-me.html",
+    "title": "Pyschoanalyze Me",
+    "preview": "Prompt: Can you psychoanalyze me?"
+  },
+  {
+    "filename": "comic-of-us.html",
+    "title": "Generate a Comic of Us",
+    "preview": "Prompt: Can you generate an image"
+  },
+  {
+    "filename": "guess-my-iq.html",
+    "title": "Guess My IQ",
+    "preview": "Prompt: Based on our talks"
   }
 ]

@@ -1,12 +1,12 @@
 [
   {
-    "filename": "what-is-this.html",
-    "title": "What is this?",
-    "preview": "This is a love letter to myse.."
-  },
-  {
     "filename": "how-was-this-built.html",
     "title": "How was this built?",
     "preview": "The Idea"
+  },
+  {
+    "filename": "what-is-this.html",
+    "title": "What is this?",
+    "preview": "This is a love letter to myse.."
   }
 ]
