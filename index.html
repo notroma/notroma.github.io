@@ -483,7 +483,7 @@
     <div 
       class="note-editor-content" 
       id="editor" 
-      contenteditable="true"
+      contenteditable="false"
     >
       <!-- Content will be loaded here -->
     </div>
@@ -818,6 +818,24 @@
         });
     }
 
+    function injectHTMLWithExecutableScripts(container, html) {
+      const scripts = container.querySelectorAll('script');
+      scripts.forEach(oldScript => {
+        const newScript = document.createElement('script');
+        if (oldScript.src) {
+          newScript.src = oldScript.src;
+        } else {
+          newScript.textContent = oldScript.textContent;
+        }
+        // Copy attributes if needed
+        [...oldScript.attributes].forEach(attr => {
+          newScript.setAttribute(attr.name, attr.value);
+        });
+        oldScript.replaceWith(newScript);
+      });
+    }
+
+
     // ---------------------------
     // FETCH FULL BLOG POST CONTENT
     // ---------------------------
@@ -826,6 +844,9 @@
       fetchWithCache(postContentUrl, 'txt')
         .then(html => {
           editor.innerHTML = html;
+          
+          // Inject the scripts in the new content to execute it
+          injectHTMLWithExecutableScripts(editor, html);
         })
         .catch(err => {
           console.error('Error fetching post content:', err);
