@@ -1,12 +1,12 @@
 [
   {
-    "filename": "well-hello-there.html",
-    "title": "Well, hello there",
-    "preview": "I see you're here..."
-  },
-  {
     "filename": "just-watched.html",
     "title": "Just Watched",
-    "preview": "What I just consumed on YouTube etc"
+    "preview": "What I just watched on YouTube, Netflix etc"
+  },
+  {
+    "filename": "workouts.html",
+    "title": "Workout Logs",
+    "preview": "Workout Logs for the last 7 days"
   }
 ]
