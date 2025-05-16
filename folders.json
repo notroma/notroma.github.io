@@ -1,15 +1,7 @@
 [
   { "name": "Hello 👋" },
+  { "name": "live_stream·txt" },
   { "name": "Concepts" },
   { "name": "Questions" },
-  { 
-    "name": "Learning", 
-    "subfolder": [
-     { "name": "Math" },
-     { "name": "Machine Learning" },
-     { "name": "Computers" }
-    ] 
-  },
   { "name": "Prompts" },
-  { "name": "Recently Deleted" }
 ]
